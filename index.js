@@ -224,15 +224,17 @@ function main() {
   if (args.ports.length > 0) {
     //closure for stepping through each port 
     //and connect + upload (use timout callback [iterate] for proceeding)
-    (function (ports, connect) {
-      this.ports = ports;
-      this.idx = 0;
-      this.connect = connect;
-      this.iterate = function() {
-        (idx>=ports.length?process.exit(0):connect(ports[idx++],iterate));
-      }
-      iterate();
-    })(args.ports, connect); 
+    Espruino.Core.Serial.getPorts(function(ports) {
+      (function (ports, connect) {
+        this.ports = ports;
+        this.idx = 0;
+        this.connect = connect;
+        this.iterate = function() {
+          (idx>=ports.length?process.exit(0):connect(ports[idx++],iterate));
+        }
+        iterate();
+      })(args.ports, connect); 
+    });
   } else {    
     log("Searching for serial ports...");
     Espruino.Core.Serial.getPorts(function(ports) {
